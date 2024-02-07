@@ -1,0 +1,51 @@
+type NFTFactory @entity {
+  id: ID! # token address
+}
+
+type NFT @entity {
+  id: ID!
+  name: String!
+  symbol: String!
+  uri: String!
+  creator: Bytes!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+  tokens: [Token!] @derivedFrom(field: "nft")
+
+  "List of addresses with DEFAULT_ADMIN_ROLE"
+  admins: [Bytes!]!
+
+  "List of addresses with ISSUER role"
+  issuers: [Bytes!]!
+
+  "List of addresses with AGENT role"
+  agents: [Bytes!]!
+
+  "List of addresses with EDITOR role"
+  editors: [Bytes!]!
+}
+
+type NFTURIUpdate @entity {
+  id: ID!
+  updatedAt: BigInt!
+  newURI: String!
+  previousURI: String!
+  nft: NFT!
+}
+
+type Token @entity {
+  id: ID!
+  uri: String!
+  nft: NFT!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+}
+
+type TokenURIUpdate @entity {
+  id: ID!
+  updatedAt: BigInt!
+  newURI: String!
+  previousURI: String!
+  nft: NFT!
+  token: Token!
+}

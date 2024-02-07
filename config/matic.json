@@ -1,0 +1,10 @@
+{
+  "network": "matic",
+  "schemaFileName": "schema.graphql",
+  "dataSources": {
+    "nftFactory": {
+      "address": "0x44ABA6e0F653424633737b707F1a88c80263030b",
+      "startBlock": 29506353
+    }
+  }
+}

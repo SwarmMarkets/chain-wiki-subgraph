@@ -1,0 +1,62 @@
+specVersion: 0.0.5
+description: Swarm Network provides open technology to enable the creation and management of digital assets. v0.0.1
+repository: https://github.com/SwarmMarkets/trade-subgraph
+schema:
+  file: ./{{ schemaFileName }}
+dataSources:
+{{ #dataSources.sx1155 }}
+  - kind: ethereum/contract
+    name: NFTFactory
+    network: {{ network }}
+    source:
+      address: "{{ dataSources.sx1155.factory.address }}"
+      abi: SX1155NFTFactory
+      startBlock: {{ dataSources.sx1155.factory.startBlock }}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/mappings/nft/index.ts
+      entities:
+        - NFTFactory
+        - NFTToken
+        - NFT
+      abis:
+        - name: SX1155NFTFactory
+          file: ./abis/SX1155NFTFactory.json
+        - name: SX1155NFT
+          file: ./abis/SX1155NFT.json
+      eventHandlers:
+        - event: SX1155NFTDeployed(address)
+          handler: handleCreateNFT
+{{ /dataSources.sx1155 }}
+templates:
+{{ #dataSources.sx1155 }}
+  - kind: ethereum/contract
+    name: NFT
+    network: {{ network }}
+    source:
+      abi: SX1155NFT
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/mappings/nft/index.ts
+      entities:
+        - NFT
+        - NFTToken
+      abis:
+        - name: SX1155NFT
+          file: ./abis/SX1155NFT.json
+      eventHandlers:
+        - event: KyaUpdated(address,string)
+          handler: handleUpdateNFTKya
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleCreateNFTToken
+        - event: TokenKyaUpdated(address,indexed uint256,string)
+          handler: handleUpdateNFTTokenKya
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
+{{ /dataSources.sx1155 }}
