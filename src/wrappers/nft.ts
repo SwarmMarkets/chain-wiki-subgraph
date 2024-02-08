@@ -9,9 +9,9 @@ import { stringToByteArray } from '../utils/stringToByteArray'
 const DEFAULT_ADMIN_ROLE_BYTES = Bytes.fromHexString(
   '0x0000000000000000000000000000000000000000000000000000000000000000',
 )
-const ISSUER_ROLE_BYTES: ByteArray = stringToByteArray('ISSUER')
-const EDITOR_ROLE_BYTES: ByteArray = stringToByteArray('EDITOR')
-const AGENT_ROLE_BYTES: ByteArray = stringToByteArray('AGENT')
+const ISSUER_ROLE_BYTES: ByteArray = stringToByteArray('ISSUER_ROLE')
+const EDITOR_ROLE_BYTES: ByteArray = stringToByteArray('EDITOR_ROLE')
+const AGENT_ROLE_BYTES: ByteArray = stringToByteArray('AGENT_ROLE')
 
 export class NFT extends SchematicNFT {
   constructor(address: Address) {
