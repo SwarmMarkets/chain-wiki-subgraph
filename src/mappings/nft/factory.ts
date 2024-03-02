@@ -23,7 +23,7 @@ export function handleCreateNFT(event: SX1155NFTDeployed): void {
 
   nft.updatedAt = event.block.timestamp
   nft.createdAt = event.block.timestamp
-  nft.creator = event.block.author
+  nft.creator = event.params.admin
 
   nft.save()
   factory.save()
