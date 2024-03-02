@@ -1,4 +1,4 @@
-import { Address, dataSource } from '@graphprotocol/graph-ts'
+import { Address, Bytes, dataSource } from '@graphprotocol/graph-ts'
 import { SX1155NFTDeployed } from '../../types/NFTFactory/SX1155NFTFactory'
 import { NFT, NFTFactory } from '../../wrappers'
 
@@ -6,8 +6,20 @@ export function handleCreateNFT(event: SX1155NFTDeployed): void {
   let factoryAddress = dataSource.address().toHex()
   let factory = NFTFactory.loadOrCreate(factoryAddress)
 
-  let address = changetype<Address>(event.params.deployedAt)
+  const params = event.params
+
+  let address = changetype<Address>(event.params.deployedAddress)
   let nft = new NFT(address)
+
+  nft.symbol = params.symbol
+  nft.name = params.name
+  nft.uri = params.uri
+
+  const editor = Bytes.fromHexString(event.params.editor.toHex())
+  const admin = Bytes.fromHexString(event.params.admin.toHex())
+
+  nft.admins = [admin]
+  nft.editors = [editor]
 
   nft.updatedAt = event.block.timestamp
   nft.createdAt = event.block.timestamp

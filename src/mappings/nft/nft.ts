@@ -1,8 +1,8 @@
+import { ContractURISet } from '../../types/NFTFactory/SX1155NFT'
 import { NFTURIUpdate } from '../../types/schema'
-import { KyaUpdated } from '../../types/templates/NFT/SX1155NFT'
 import { NFT } from '../../wrappers'
 
-export function handleUpdateNFTKya(event: KyaUpdated): void {
+export function handleUpdateNFTUri(event: ContractURISet): void {
   const nft = NFT.mustLoad(event.address.toHexString())
 
   const updatedNFT = new NFTURIUpdate(
@@ -10,10 +10,10 @@ export function handleUpdateNFTKya(event: KyaUpdated): void {
   )
   updatedNFT.nft = nft.id
   updatedNFT.previousURI = nft.uri
-  updatedNFT.newURI = event.params.kya
+  updatedNFT.newURI = event.params.uri
   updatedNFT.updatedAt = event.block.timestamp
   updatedNFT.save()
 
-  nft.uri = event.params.kya
+  nft.uri = event.params.uri
   nft.save()
 }

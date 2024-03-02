@@ -1,15 +1,15 @@
 import { TokenURIUpdate } from '../../types/schema'
-import {
-  TokenKyaUpdated,
-  TransferSingle,
-} from '../../types/templates/NFT/SX1155NFT'
+import { TokenURISet, Minted } from '../../types/templates/NFT/SX1155NFT'
 import { Token } from '../../wrappers/nft-token'
 
-export function handleCreateNFTToken(event: TransferSingle): void {
+export function handleCreateToken(event: Minted): void {
   const nftAddress = event.address
-  const tokenId = event.params.id
+  const tokenId = event.params.tokenId
 
   const token = new Token(nftAddress, tokenId)
+
+  token.uri = event.params.uri
+
   token.updatedAt = event.block.timestamp
   token.createdAt = event.block.timestamp
   token.nft = nftAddress.toHexString()
@@ -17,12 +17,12 @@ export function handleCreateNFTToken(event: TransferSingle): void {
   token.save()
 }
 
-export function handleUpdateNFTTokenKya(event: TokenKyaUpdated): void {
+export function handleUpdateTokenUri(event: TokenURISet): void {
   const nftAddress = event.address
   const tokenId = event.params.id
 
   const token = Token.mustLoad(nftAddress, tokenId)
-  token.uri = event.params.kya
+  token.uri = event.params.uri
   token.updatedAt = event.block.timestamp
 
   const updatedToken = new TokenURIUpdate(
@@ -32,7 +32,7 @@ export function handleUpdateNFTTokenKya(event: TokenKyaUpdated): void {
   updatedToken.updatedAt = event.block.timestamp
   updatedToken.token = token.id
   updatedToken.nft = token.nft
-  updatedToken.newURI = event.params.kya
+  updatedToken.newURI = event.params.uri
   updatedToken.previousURI = token.uri
 
   token.save()

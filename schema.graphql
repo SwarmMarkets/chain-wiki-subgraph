@@ -15,12 +15,6 @@ type NFT @entity {
   "List of addresses with DEFAULT_ADMIN_ROLE"
   admins: [Bytes!]!
 
-  "List of addresses with ISSUER role"
-  issuers: [Bytes!]!
-
-  "List of addresses with AGENT role"
-  agents: [Bytes!]!
-
   "List of addresses with EDITOR role"
   editors: [Bytes!]!
 }
@@ -47,5 +41,13 @@ type TokenURIUpdate @entity {
   newURI: String!
   previousURI: String!
   nft: NFT!
+  token: Token!
+}
+
+type Comment @entity {
+  id: ID!
+  commentator: Bytes!
+  createdAt: BigInt!
+  uri: String!
   token: Token!
 }

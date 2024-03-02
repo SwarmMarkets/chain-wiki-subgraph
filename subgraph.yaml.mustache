@@ -27,7 +27,7 @@ dataSources:
         - name: SX1155NFT
           file: ./abis/SX1155NFT.json
       eventHandlers:
-        - event: SX1155NFTDeployed(address)
+        - event: SX1155NFTDeployed(address,string,string,string,address,address)
           handler: handleCreateNFT
 {{ /dataSources.sx1155 }}
 templates:
@@ -49,12 +49,16 @@ templates:
         - name: SX1155NFT
           file: ./abis/SX1155NFT.json
       eventHandlers:
-        - event: KyaUpdated(address,string)
-          handler: handleUpdateNFTKya
-        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
-          handler: handleCreateNFTToken
-        - event: TokenKyaUpdated(address,indexed uint256,string)
-          handler: handleUpdateNFTTokenKya
+        - event: ContractURISet(address,string)
+          handler: handleUpdateNFTUri
+        - event: Minted(address,address,uint256,uint256,string,bytes)
+          handler: handleCreateToken
+        - event: TokenURISet(address,indexed uint256,string)
+          handler: handleUpdateTokenUri
+        - event: Commented(address,uint256,string,uint256)
+          handler: handleComment
+        - event: CommentRemoved(address,uint256,string,uint256)
+          handler: handleCommetRemoved
         - event: RoleGranted(indexed bytes32,indexed address,indexed address)
           handler: handleRoleGranted
         - event: RoleRevoked(indexed bytes32,indexed address,indexed address)

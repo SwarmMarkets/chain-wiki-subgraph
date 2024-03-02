@@ -4,17 +4,21 @@ import { Token as SchematicToken } from '../types/schema'
 
 export class Token extends SchematicToken {
   constructor(nftAddress: Address, tokenId: BigInt) {
-    const address = nftAddress.toHexString()
-    const id = tokenId.toHexString()
-    super(`${address}-${id}`)
+    const id = Token.buildID(nftAddress, tokenId)
+    super(id)
 
     this.uri = ''
   }
 
-  static safeLoad(nftAddress: Address, tokenId: BigInt): Token | null {
+  static buildID(nftAddress: Address, tokenId: BigInt): string {
     const address = nftAddress.toHexString()
     const id = tokenId.toHexString()
-    let token = Token.load(`${address}${id}`)
+    return address.concat('-').concat(id)
+  }
+
+  static safeLoad(nftAddress: Address, tokenId: BigInt): Token | null {
+    const id = Token.buildID(nftAddress, tokenId)
+    let token = Token.load(id)
 
     if (token === null) {
       log.warning('Token not found: {}', [id])
@@ -25,9 +29,8 @@ export class Token extends SchematicToken {
   }
 
   static mustLoad(nftAddress: Address, tokenId: BigInt): Token {
-    const address = nftAddress.toHexString()
-    const id = tokenId.toHexString()
-    let token = Token.load(`${address}-${id}`)
+    const id = Token.buildID(nftAddress, tokenId)
+    let token = Token.load(id)
 
     if (token === null) {
       log.critical('Token not found: {}', [id])

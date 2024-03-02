@@ -4,8 +4,8 @@
   "dataSources": {
     "sx1155": {
       "factory": {
-        "address": "0xdEA790E5888B04004b6890a8DBAcd07358006273",
-        "startBlock": 44913169
+        "address": "0x695d66762C05c0B1644eD34467215cCf1AdAe3d0",
+        "startBlock": 46217840
       }
     }
   }
