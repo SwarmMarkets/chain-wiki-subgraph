@@ -12,30 +12,39 @@ export function handleComment(event: Commented): void {
   const tokenCreatedId = Token.buildID(nftAddress, tokenId)
   const comment = new Comment(nftAddress, tokenId, commentId)
 
-  const commentJsonValue = json.fromString(event.params.comment)
+  const commentJsonValue = json.try_fromString(event.params.comment)
 
-  if (commentJsonValue.isNull()) {
-    log.warning('WARNING: Failed to parse json from string', [])
+  if (commentJsonValue.isError) {
+    log.warning('WARNING: Failed to parse json from string {}', [])
     return
   }
 
-  const commentData = commentJsonValue.toObject()
+  const commentData = commentJsonValue.value.toObject()
 
   if (commentData.entries.length === 0) {
-    log.warning('WARNING: JSON is empty tokenId {}', [tokenCreatedId])
+    log.warning('WARNING: JSON is empty commentId {}', [comment.id])
     return
   }
 
   const jsonSectionId = changetype<JSONValue | null>(
     commentData.get('sectionId'),
   )
-  const sectionId = jsonUtils.parseString(jsonSectionId)
+  const jsonMessageUri = changetype<JSONValue | null>(commentData.get('uri'))
 
-  if (sectionId && isNullable(sectionId) === false) {
-    comment.sectionId = sectionId
+  if (
+    (jsonSectionId && jsonSectionId.isNull()) ||
+    (jsonMessageUri && jsonMessageUri.isNull())
+  ) {
+    log.warning('WARNING: Invalid JSON format {}', [tokenCreatedId])
+    return
   }
 
-  comment.uri = event.params.comment
+  const sectionId = changetype<string>(jsonUtils.parseString(jsonSectionId))
+  const messageUri = changetype<string>(jsonUtils.parseString(jsonMessageUri))
+
+  comment.sectionId = sectionId
+  comment.uri = messageUri
+
   comment.commentator = event.params.commentator
   comment.createdAt = event.block.timestamp
   comment.token = tokenCreatedId
