@@ -50,4 +50,5 @@ type Comment @entity {
   createdAt: BigInt!
   uri: String!
   token: Token!
+  sectionId: String!
 }
