@@ -6,6 +6,7 @@ export class Comment extends SchematicComment {
   constructor(nftAddress: Address, tokenId: BigInt, commentId: BigInt) {
     const id = Comment.buildID(nftAddress, tokenId, commentId)
     super(id)
+    this.sectionId = ''
   }
 
   static buildID(
