@@ -18,6 +18,8 @@ export class NFT extends SchematicNFT {
     this.uri = ''
     this.admins = []
     this.editors = []
+    this.indexPagesUri = ''
+    this.logoUrl = ''
 
     NFTTemplate.create(address)
   }

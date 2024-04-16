@@ -17,6 +17,9 @@ type NFT @entity {
 
   "List of addresses with EDITOR role"
   editors: [Bytes!]!
+
+  indexPagesUri: String!
+  logoUrl: String!
 }
 
 type NFTURIUpdate @entity {
