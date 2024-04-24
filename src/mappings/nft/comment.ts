@@ -1,8 +1,8 @@
-import { store, json, log, JSONValue } from '@graphprotocol/graph-ts'
+import { json, log, store } from '@graphprotocol/graph-ts'
 import { CommentRemoved, Commented } from '../../types/templates/NFT/SX1155NFT'
+import { jsonUtils } from '../../utils/json'
 import { Comment } from '../../wrappers/comment'
 import { Token } from '../../wrappers/nft-token'
-import { jsonUtils } from '../../utils/json'
 
 export function handleComment(event: Commented): void {
   const nftAddress = event.address
@@ -15,27 +15,24 @@ export function handleComment(event: Commented): void {
   const commentJsonValue = json.try_fromString(event.params.comment)
 
   if (commentJsonValue.isError) {
-    log.warning('WARNING: Failed to parse json from string {}', [])
+    log.warning('WARNING: Failed to parse json from string. CommentId: {}', [
+      comment.id,
+    ])
     return
   }
 
   const commentData = commentJsonValue.value.toObject()
 
   if (commentData.entries.length === 0) {
-    log.warning('WARNING: JSON is empty commentId {}', [comment.id])
+    log.warning('WARNING: JSON is empty. CommentId: {}', [comment.id])
     return
   }
 
-  const jsonSectionId = changetype<JSONValue | null>(
-    commentData.get('sectionId'),
-  )
-  const jsonMessageUri = changetype<JSONValue | null>(commentData.get('uri'))
+  const jsonSectionId = commentData.get('sectionId')
+  const jsonMessageUri = commentData.get('uri')
 
-  if (
-    (jsonSectionId && jsonSectionId.isNull()) ||
-    (jsonMessageUri && jsonMessageUri.isNull())
-  ) {
-    log.warning('WARNING: Invalid JSON format {}', [tokenCreatedId])
+  if (jsonSectionId === null || jsonMessageUri === null) {
+    log.warning('WARNING: Invalid JSON format. CommentId: {}', [comment.id])
     return
   }
 
