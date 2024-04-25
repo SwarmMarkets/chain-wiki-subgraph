@@ -1,0 +1,12 @@
+{
+  "network": "arbitrum-sepolia",
+  "schemaFileName": "schema.graphql",
+  "dataSources": {
+    "sx1155": {
+      "factory": {
+        "address": "0x4EE9e0BD3eA6ad6bd784D66cb1aE91da94E8941a",
+        "startBlock": 34308634
+      }
+    }
+  }
+}
