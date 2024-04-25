@@ -10,7 +10,7 @@ export function handleUpdateNFTUri(event: ContractURISet): void {
   const nftJsonValue = json.try_fromString(event.params.uri)
 
   if (nftJsonValue.isError) {
-    log.warning('WARNING: Failed to parse json from string {}', [])
+    log.warning('WARNING: Failed to parse json from string nftId {}', [nft.id])
     return
   }
 
@@ -21,18 +21,16 @@ export function handleUpdateNFTUri(event: ContractURISet): void {
     return
   }
 
-  const jsonLogoUrl = changetype<JSONValue | null>(nftData.get('logoUri'))
-  const jsonIndexPagesUri = changetype<JSONValue | null>(
-    nftData.get('indexPagesUri'),
-  )
-  const jsonUri = changetype<JSONValue | null>(nftData.get('uri'))
-  const jsonName = changetype<JSONValue | null>(nftData.get('name'))
+  const jsonLogoUrl = nftData.get('logoUri')
+  const jsonIndexPagesUri = nftData.get('indexPagesUri')
+  const jsonUri = nftData.get('uri')
+  const jsonName = nftData.get('name')
 
   if (
-    (jsonLogoUrl && jsonLogoUrl.isNull()) ||
-    (jsonIndexPagesUri && jsonIndexPagesUri.isNull()) ||
-    (jsonUri && jsonUri.isNull()) ||
-    (jsonName && jsonName.isNull())
+    jsonLogoUrl === null &&
+    jsonIndexPagesUri === null &&
+    jsonUri === null &&
+    jsonName === null
   ) {
     log.warning('WARNING: Invalid JSON format {}', [nft.id])
     return
@@ -45,9 +43,15 @@ export function handleUpdateNFTUri(event: ContractURISet): void {
   const uri = changetype<string>(jsonUtils.parseString(jsonUri))
   const name = changetype<string>(jsonUtils.parseString(jsonName))
 
-  logoUrl && (nft.logoUrl = logoUrl)
-  indexPagesUri && (nft.indexPagesUri = indexPagesUri)
-  name && (nft.name = name)
+  if (logoUrl) {
+    nft.logoUrl = logoUrl
+  }
+  if (indexPagesUri) {
+    nft.indexPagesUri = indexPagesUri
+  }
+  if (name) {
+    nft.name = name
+  }
 
   if (uri) {
     const updatedNFT = new NFTURIUpdate(

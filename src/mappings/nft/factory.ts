@@ -1,11 +1,4 @@
-import {
-  Address,
-  Bytes,
-  JSONValue,
-  dataSource,
-  json,
-  log,
-} from '@graphprotocol/graph-ts'
+import { Address, Bytes, dataSource, json, log } from '@graphprotocol/graph-ts'
 import { SX1155NFTDeployed } from '../../types/NFTFactory/SX1155NFTFactory'
 import { NFT, NFTFactory } from '../../wrappers'
 import { jsonUtils } from '../../utils/json'
@@ -22,29 +15,23 @@ export function handleCreateNFT(event: SX1155NFTDeployed): void {
   const nftJsonValue = json.try_fromString(event.params.uri)
 
   if (nftJsonValue.isError) {
-    log.warning('WARNING: Failed to parse json from string {}', [])
+    log.warning('WARNING: Failed to parse json from string nftId {}', [nft.id])
     return
   }
 
   const nftData = nftJsonValue.value.toObject()
 
   if (nftData.entries.length === 0) {
-    log.warning('WARNING: JSON is empty commentId {}', [nft.id])
+    log.warning('WARNING: JSON is empty nftId {}', [nft.id])
     return
   }
 
-  const jsonLogoUrl = changetype<JSONValue | null>(nftData.get('logoUri'))
-  const jsonIndexPagesUri = changetype<JSONValue | null>(
-    nftData.get('indexPagesUri'),
-  )
-  const jsonUri = changetype<JSONValue | null>(nftData.get('uri'))
+  const jsonLogoUrl = nftData.get('logoUri')
+  const jsonIndexPagesUri = nftData.get('indexPagesUri')
+  const jsonUri = nftData.get('uri')
 
-  if (
-    (jsonLogoUrl && jsonLogoUrl.isNull()) ||
-    (jsonIndexPagesUri && jsonIndexPagesUri.isNull()) ||
-    (jsonUri && jsonUri.isNull())
-  ) {
-    log.warning('WARNING: Invalid JSON format {}', [nft.id])
+  if (jsonLogoUrl === null || jsonIndexPagesUri === null || jsonUri === null) {
+    log.warning('WARNING: Invalid JSON format nftId {}', [nft.id])
     return
   }
 
