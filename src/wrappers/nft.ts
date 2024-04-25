@@ -1,15 +1,38 @@
-import { Address, ByteArray, Bytes, log } from '@graphprotocol/graph-ts/index'
+import {
+  Address,
+  ByteArray,
+  Bytes,
+  json,
+  log,
+} from '@graphprotocol/graph-ts/index'
 
 import { NFT as SchematicNFT } from '../types/schema'
 import { NFT as NFTTemplate } from '../types/templates'
 import { SX1155NFT as NFTContract } from '../types/templates/NFT/SX1155NFT'
 import { push, remove } from '../utils/array'
 import { stringToByteArray } from '../utils/stringToByteArray'
+import { jsonUtils } from '../utils/json'
 
 const DEFAULT_ADMIN_ROLE_BYTES = Bytes.fromHexString(
   '0x0000000000000000000000000000000000000000000000000000000000000000',
 )
 const EDITOR_ROLE_BYTES: ByteArray = stringToByteArray('EDITOR_ROLE')
+
+class NFTChangedFields {
+  logoUrl: string | null
+  indexPagesUri: string | null
+  uri: string | null
+  previousUri: string | null
+  name: string | null
+
+  constructor() {
+    this.logoUrl = null
+    this.indexPagesUri = null
+    this.uri = null
+    this.previousUri = null
+    this.name = null
+  }
+}
 
 export class NFT extends SchematicNFT {
   constructor(address: Address) {
@@ -58,6 +81,51 @@ export class NFT extends SchematicNFT {
         account.toHex(),
       ])
     }
+  }
+
+  public setUriJson(jsonString: string): NFTChangedFields | null {
+    const nftJsonValue = json.try_fromString(jsonString)
+
+    if (nftJsonValue.isError) {
+      log.warning('WARNING: Failed to parse json from string nftId {}', [
+        this.id,
+      ])
+      return null
+    }
+
+    const nftData = nftJsonValue.value.toObject()
+
+    const jsonLogoUrl = nftData.get('logoUri')
+    const jsonIndexPagesUri = nftData.get('indexPagesUri')
+    const jsonUri = nftData.get('uri')
+    const jsonName = nftData.get('name')
+
+    const changedFields = new NFTChangedFields()
+    if (jsonLogoUrl !== null) {
+      const logoUrl = changetype<string>(jsonUtils.parseString(jsonLogoUrl))
+      this.logoUrl = logoUrl
+      changedFields.logoUrl = logoUrl
+    }
+    if (jsonIndexPagesUri !== null) {
+      const indexPagesUri = changetype<string>(
+        jsonUtils.parseString(jsonIndexPagesUri),
+      )
+      this.indexPagesUri = indexPagesUri
+      changedFields.indexPagesUri = indexPagesUri
+    }
+    if (jsonUri !== null) {
+      const uri = changetype<string>(jsonUtils.parseString(jsonUri))
+      changedFields.previousUri = this.uri
+      changedFields.uri = uri
+      this.uri = uri
+    }
+    if (jsonName !== null) {
+      const name = changetype<string>(jsonUtils.parseString(jsonName))
+      this.name = name
+      changedFields.name = name
+    }
+
+    return changedFields
   }
 
   static safeLoad(id: string): NFT | null {
