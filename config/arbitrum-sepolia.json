@@ -1,5 +1,5 @@
 {
-  "network": "arbitrum-sepolia",
+  "network": "sepolia",
   "schemaFileName": "schema.graphql",
   "dataSources": {
     "sx1155": {
