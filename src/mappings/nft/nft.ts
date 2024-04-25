@@ -43,17 +43,17 @@ export function handleUpdateNFTUri(event: ContractURISet): void {
   const uri = changetype<string>(jsonUtils.parseString(jsonUri))
   const name = changetype<string>(jsonUtils.parseString(jsonName))
 
-  if (logoUrl) {
+  if (logoUrl !== null) {
     nft.logoUrl = logoUrl
   }
-  if (indexPagesUri) {
+  if (indexPagesUri !== null) {
     nft.indexPagesUri = indexPagesUri
   }
-  if (name) {
+  if (name !== null) {
     nft.name = name
   }
 
-  if (uri) {
+  if (uri !== null) {
     const updatedNFT = new NFTURIUpdate(
       event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
     )
