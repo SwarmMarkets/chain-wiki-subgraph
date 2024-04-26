@@ -8,7 +8,7 @@ export function handleCreateToken(event: Minted): void {
 
   const token = new Token(nftAddress, tokenId)
 
-  token.uri = event.params.uri
+  token.setUriJson(event.params.uri)
 
   token.updatedAt = event.block.timestamp
   token.createdAt = event.block.timestamp
@@ -22,19 +22,26 @@ export function handleUpdateTokenUri(event: TokenURISet): void {
   const tokenId = event.params.id
 
   const token = Token.mustLoad(nftAddress, tokenId)
-  token.uri = event.params.uri
+  const changedFields = token.setUriJson(event.params.uri)
+
   token.updatedAt = event.block.timestamp
 
-  const updatedToken = new TokenURIUpdate(
-    event.transaction.hash.toHexString() + '-' + event.logIndex.toHexString(),
-  )
+  if (
+    changedFields !== null &&
+    changedFields.uri !== null &&
+    changedFields.previousUri !== null
+  ) {
+    const updatedToken = new TokenURIUpdate(
+      event.transaction.hash.toHexString() + '-' + event.logIndex.toHexString(),
+    )
 
-  updatedToken.updatedAt = event.block.timestamp
-  updatedToken.token = token.id
-  updatedToken.nft = token.nft
-  updatedToken.newURI = event.params.uri
-  updatedToken.previousURI = token.uri
+    updatedToken.updatedAt = event.block.timestamp
+    updatedToken.token = token.id
+    updatedToken.nft = token.nft
+    updatedToken.newURI = event.params.uri
+    updatedToken.previousURI = token.uri
+    updatedToken.save()
+  }
 
   token.save()
-  updatedToken.save()
 }

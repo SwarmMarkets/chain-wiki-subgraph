@@ -32,6 +32,8 @@ type NFTURIUpdate @entity {
 
 type Token @entity {
   id: ID!
+  name: String!
+  voteProposalUri: String!
   uri: String!
   nft: NFT!
   createdAt: BigInt!

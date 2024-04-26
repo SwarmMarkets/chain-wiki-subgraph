@@ -1,6 +1,21 @@
-import { Address, BigInt, log } from '@graphprotocol/graph-ts/index'
+import { Address, BigInt, json, log } from '@graphprotocol/graph-ts/index'
 
 import { Token as SchematicToken } from '../types/schema'
+import { jsonUtils } from '../utils/json'
+
+class NFTTokenChangedFields {
+  name: string | null
+  uri: string | null
+  previousUri: string | null
+  voteProposalUri: string | null
+
+  constructor() {
+    this.name = null
+    this.uri = null
+    this.previousUri = null
+    this.voteProposalUri = null
+  }
+}
 
 export class Token extends SchematicToken {
   constructor(nftAddress: Address, tokenId: BigInt) {
@@ -8,6 +23,8 @@ export class Token extends SchematicToken {
     super(id)
 
     this.uri = ''
+    this.name = ''
+    this.voteProposalUri = ''
   }
 
   static buildID(nftAddress: Address, tokenId: BigInt): string {
@@ -37,5 +54,44 @@ export class Token extends SchematicToken {
     }
 
     return changetype<Token>(token)
+  }
+
+  public setUriJson(jsonString: string): NFTTokenChangedFields | null {
+    const tokenJsonValue = json.try_fromString(jsonString)
+
+    if (tokenJsonValue.isError) {
+      log.warning('WARNING: Failed to parse json from string tokenId {}', [
+        this.id,
+      ])
+      return null
+    }
+
+    const tokenData = tokenJsonValue.value.toObject()
+
+    const jsonUri = tokenData.get('uri')
+    const jsonName = tokenData.get('name')
+    const jsonVoteProposalUri = tokenData.get('voteProposalUri')
+
+    const changedFields = new NFTTokenChangedFields()
+    if (jsonUri !== null) {
+      const uri = changetype<string>(jsonUtils.parseString(jsonUri))
+      changedFields.uri = uri
+      changedFields.previousUri = this.uri
+      this.uri = uri
+    }
+    if (jsonName !== null) {
+      const name = changetype<string>(jsonUtils.parseString(jsonName))
+      changedFields.name = name
+      this.name = name
+    }
+    if (jsonVoteProposalUri !== null) {
+      const voteProposalUri = changetype<string>(
+        jsonUtils.parseString(jsonVoteProposalUri),
+      )
+      changedFields.voteProposalUri = voteProposalUri
+      this.voteProposalUri = voteProposalUri
+    }
+
+    return changedFields
   }
 }
