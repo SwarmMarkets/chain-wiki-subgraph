@@ -74,22 +74,26 @@ export class Token extends SchematicToken {
 
     const changedFields = new NFTTokenChangedFields()
     if (jsonUri !== null) {
-      const uri = changetype<string>(jsonUtils.parseString(jsonUri))
-      changedFields.uri = uri
-      changedFields.previousUri = this.uri
-      this.uri = uri
+      const uri = jsonUtils.parseString(jsonUri)
+      if (uri !== null) {
+        changedFields.uri = uri
+        changedFields.previousUri = this.uri
+        this.uri = uri
+      }
     }
     if (jsonName !== null) {
-      const name = changetype<string>(jsonUtils.parseString(jsonName))
-      changedFields.name = name
-      this.name = name
+      const name = jsonUtils.parseString(jsonName)
+      if (name !== null) {
+        changedFields.name = name
+        this.name = name
+      }
     }
     if (jsonVoteProposalUri !== null) {
-      const voteProposalUri = changetype<string>(
-        jsonUtils.parseString(jsonVoteProposalUri),
-      )
-      changedFields.voteProposalUri = voteProposalUri
-      this.voteProposalUri = voteProposalUri
+      const voteProposalUri = jsonUtils.parseString(jsonVoteProposalUri)
+      if (voteProposalUri !== null) {
+        changedFields.voteProposalUri = voteProposalUri
+        this.voteProposalUri = voteProposalUri
+      }
     }
 
     return changedFields

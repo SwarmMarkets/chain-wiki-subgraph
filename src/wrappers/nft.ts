@@ -102,27 +102,33 @@ export class NFT extends SchematicNFT {
 
     const changedFields = new NFTChangedFields()
     if (jsonLogoUrl !== null) {
-      const logoUrl = changetype<string>(jsonUtils.parseString(jsonLogoUrl))
-      this.logoUrl = logoUrl
-      changedFields.logoUrl = logoUrl
+      const logoUrl = jsonUtils.parseString(jsonLogoUrl)
+      if (logoUrl !== null) {
+        this.logoUrl = logoUrl
+        changedFields.logoUrl = logoUrl
+      }
     }
     if (jsonIndexPagesUri !== null) {
-      const indexPagesUri = changetype<string>(
-        jsonUtils.parseString(jsonIndexPagesUri),
-      )
-      this.indexPagesUri = indexPagesUri
-      changedFields.indexPagesUri = indexPagesUri
+      const indexPagesUri = jsonUtils.parseString(jsonIndexPagesUri)
+      if (indexPagesUri !== null) {
+        this.indexPagesUri = indexPagesUri
+        changedFields.indexPagesUri = indexPagesUri
+      }
     }
     if (jsonUri !== null) {
-      const uri = changetype<string>(jsonUtils.parseString(jsonUri))
-      changedFields.previousUri = this.uri
-      changedFields.uri = uri
-      this.uri = uri
+      const uri = jsonUtils.parseString(jsonUri)
+      if (uri !== null) {
+        changedFields.previousUri = this.uri
+        changedFields.uri = uri
+        this.uri = uri
+      }
     }
     if (jsonName !== null) {
       const name = changetype<string>(jsonUtils.parseString(jsonName))
-      this.name = name
-      changedFields.name = name
+      if (name !== null) {
+        this.name = name
+        changedFields.name = name
+      }
     }
 
     return changedFields
