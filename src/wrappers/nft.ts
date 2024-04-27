@@ -95,7 +95,7 @@ export class NFT extends SchematicNFT {
 
     const nftData = nftJsonValue.value.toObject()
 
-    const jsonLogoUrl = nftData.get('logoUri')
+    const jsonLogoUrl = nftData.get('logoUrl')
     const jsonIndexPagesUri = nftData.get('indexPagesUri')
     const jsonUri = nftData.get('uri')
     const jsonName = nftData.get('name')
