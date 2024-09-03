@@ -2,39 +2,21 @@ import {
   Address,
   ByteArray,
   Bytes,
+  ethereum,
   json,
   log,
 } from '@graphprotocol/graph-ts/index'
 
-import { NFT as SchematicNFT } from '../types/schema'
+import { NFTURIUpdate, NFT as SchematicNFT } from '../types/schema'
 import { NFT as NFTTemplate } from '../types/templates'
-import { SX1155NFT as NFTContract } from '../types/templates/NFT/SX1155NFT'
 import { push, remove } from '../utils/array'
-import { stringToByteArray } from '../utils/stringToByteArray'
 import { jsonUtils } from '../utils/json'
+import { stringToByteArray } from '../utils/stringToByteArray'
 
 const DEFAULT_ADMIN_ROLE_BYTES = Bytes.fromHexString(
   '0x0000000000000000000000000000000000000000000000000000000000000000',
 )
 const EDITOR_ROLE_BYTES: ByteArray = stringToByteArray('EDITOR_ROLE')
-
-class NFTChangedFields {
-  logoUrl: string | null
-  indexPagesUri: string | null
-  uri: string | null
-  previousUri: string | null
-  name: string | null
-  headerBackground: string | null
-
-  constructor() {
-    this.logoUrl = null
-    this.indexPagesUri = null
-    this.uri = null
-    this.previousUri = null
-    this.name = null
-    this.headerBackground = null
-  }
-}
 
 export class NFT extends SchematicNFT {
   constructor(address: Address) {
@@ -86,14 +68,18 @@ export class NFT extends SchematicNFT {
     }
   }
 
-  public setUriJson(jsonString: string): NFTChangedFields | null {
+  public setUriJson(
+    jsonString: string,
+    event: ethereum.Event,
+    isUriUpdate: boolean = false,
+  ): void {
     const nftJsonValue = json.try_fromString(jsonString)
 
     if (nftJsonValue.isError) {
       log.warning('WARNING: Failed to parse json from string nftId {}', [
         this.id,
       ])
-      return null
+      return
     }
 
     const nftData = nftJsonValue.value.toObject()
@@ -104,26 +90,24 @@ export class NFT extends SchematicNFT {
     const jsonName = nftData.get('name')
     const jsonHeaderBackground = nftData.get('headerBackground')
 
-    const changedFields = new NFTChangedFields()
+    let previousUri = ''
+
     if (jsonLogoUrl !== null) {
       const logoUrl = jsonUtils.parseString(jsonLogoUrl)
       if (logoUrl !== null) {
         this.logoUrl = logoUrl
-        changedFields.logoUrl = logoUrl
       }
     }
     if (jsonIndexPagesUri !== null) {
       const indexPagesUri = jsonUtils.parseString(jsonIndexPagesUri)
       if (indexPagesUri !== null) {
         this.indexPagesUri = indexPagesUri
-        changedFields.indexPagesUri = indexPagesUri
       }
     }
     if (jsonUri !== null) {
       const uri = jsonUtils.parseString(jsonUri)
       if (uri !== null) {
-        changedFields.previousUri = this.uri
-        changedFields.uri = uri
+        previousUri = this.uri
         this.uri = uri
       }
     }
@@ -131,7 +115,6 @@ export class NFT extends SchematicNFT {
       const name = changetype<string>(jsonUtils.parseString(jsonName))
       if (name !== null) {
         this.name = name
-        changedFields.name = name
       }
     }
     if (jsonHeaderBackground !== null) {
@@ -140,11 +123,23 @@ export class NFT extends SchematicNFT {
       )
       if (headerBackground !== null) {
         this.headerBackground = headerBackground
-        changedFields.headerBackground = headerBackground
       }
     }
 
-    return changedFields
+    if (isUriUpdate) {
+      const updatedNFT = new NFTURIUpdate(
+        event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
+      )
+
+      const previousURI = changetype<string>(previousUri)
+      const newURI = changetype<string>(this.uri)
+
+      updatedNFT.nft = this.id
+      updatedNFT.previousURI = previousURI
+      updatedNFT.newURI = newURI
+      updatedNFT.updatedAt = event.block.timestamp
+      updatedNFT.save()
+    }
   }
 
   static safeLoad(id: string): NFT | null {

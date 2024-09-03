@@ -11,7 +11,7 @@ export function handleCreateNFT(event: SX1155NFTDeployed): void {
   let address = changetype<Address>(event.params.deployedAddress)
   let nft = new NFT(address)
 
-  nft.setUriJson(event.params.uri)
+  nft.setUriJson(event.params.uri, event)
 
   nft.symbol = params.symbol
   nft.name = params.name

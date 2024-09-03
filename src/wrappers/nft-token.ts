@@ -1,21 +1,13 @@
-import { Address, BigInt, json, log } from '@graphprotocol/graph-ts/index'
+import {
+  Address,
+  BigInt,
+  ethereum,
+  json,
+  log,
+} from '@graphprotocol/graph-ts/index'
 
-import { Token as SchematicToken } from '../types/schema'
+import { Token as SchematicToken, TokenURIUpdate } from '../types/schema'
 import { jsonUtils } from '../utils/json'
-
-class NFTTokenChangedFields {
-  name: string | null
-  uri: string | null
-  previousUri: string | null
-  voteProposalUri: string | null
-
-  constructor() {
-    this.name = null
-    this.uri = null
-    this.previousUri = null
-    this.voteProposalUri = null
-  }
-}
 
 export class Token extends SchematicToken {
   constructor(nftAddress: Address, tokenId: BigInt) {
@@ -56,14 +48,18 @@ export class Token extends SchematicToken {
     return changetype<Token>(token)
   }
 
-  public setUriJson(jsonString: string): NFTTokenChangedFields | null {
+  public setUriJson(
+    jsonString: string,
+    event: ethereum.Event,
+    isUriUpdate: boolean = false,
+  ): void {
     const tokenJsonValue = json.try_fromString(jsonString)
 
     if (tokenJsonValue.isError) {
       log.warning('WARNING: Failed to parse json from string tokenId {}', [
         this.id,
       ])
-      return null
+      return
     }
 
     const tokenData = tokenJsonValue.value.toObject()
@@ -72,30 +68,41 @@ export class Token extends SchematicToken {
     const jsonName = tokenData.get('name')
     const jsonVoteProposalUri = tokenData.get('voteProposalUri')
 
-    const changedFields = new NFTTokenChangedFields()
+    let previousUri = ''
+
     if (jsonUri !== null) {
       const uri = jsonUtils.parseString(jsonUri)
       if (uri !== null) {
-        changedFields.uri = uri
-        changedFields.previousUri = this.uri
+        previousUri = this.uri
         this.uri = uri
       }
     }
     if (jsonName !== null) {
       const name = jsonUtils.parseString(jsonName)
       if (name !== null) {
-        changedFields.name = name
         this.name = name
       }
     }
     if (jsonVoteProposalUri !== null) {
       const voteProposalUri = jsonUtils.parseString(jsonVoteProposalUri)
       if (voteProposalUri !== null) {
-        changedFields.voteProposalUri = voteProposalUri
         this.voteProposalUri = voteProposalUri
       }
     }
 
-    return changedFields
+    if (isUriUpdate) {
+      const updatedToken = new TokenURIUpdate(
+        event.transaction.hash.toHexString() +
+          '-' +
+          event.logIndex.toHexString(),
+      )
+
+      updatedToken.updatedAt = event.block.timestamp
+      updatedToken.token = this.id
+      updatedToken.nft = this.nft
+      updatedToken.newURI = this.uri
+      updatedToken.previousURI = previousUri
+      updatedToken.save()
+    }
   }
 }
