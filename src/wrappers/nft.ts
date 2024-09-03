@@ -24,6 +24,7 @@ class NFTChangedFields {
   uri: string | null
   previousUri: string | null
   name: string | null
+  headerBackground: string | null
 
   constructor() {
     this.logoUrl = null
@@ -31,6 +32,7 @@ class NFTChangedFields {
     this.uri = null
     this.previousUri = null
     this.name = null
+    this.headerBackground = null
   }
 }
 
@@ -43,6 +45,7 @@ export class NFT extends SchematicNFT {
     this.editors = []
     this.indexPagesUri = ''
     this.logoUrl = ''
+    this.headerBackground = ''
 
     NFTTemplate.create(address)
   }
@@ -99,6 +102,7 @@ export class NFT extends SchematicNFT {
     const jsonIndexPagesUri = nftData.get('indexPagesUri')
     const jsonUri = nftData.get('uri')
     const jsonName = nftData.get('name')
+    const jsonHeaderBackground = nftData.get('headerBackground')
 
     const changedFields = new NFTChangedFields()
     if (jsonLogoUrl !== null) {
@@ -128,6 +132,15 @@ export class NFT extends SchematicNFT {
       if (name !== null) {
         this.name = name
         changedFields.name = name
+      }
+    }
+    if (jsonHeaderBackground !== null) {
+      const headerBackground = changetype<string>(
+        jsonUtils.parseString(jsonHeaderBackground),
+      )
+      if (headerBackground !== null) {
+        this.headerBackground = headerBackground
+        changedFields.headerBackground = headerBackground
       }
     }
 
