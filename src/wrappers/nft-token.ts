@@ -90,7 +90,7 @@ export class Token extends SchematicToken {
       }
     }
 
-    if (isUriUpdate) {
+    if (isUriUpdate && previousUri !== '') {
       const updatedToken = new TokenURIUpdate(
         event.transaction.hash.toHexString() +
           '-' +

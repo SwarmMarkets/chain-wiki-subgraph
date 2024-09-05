@@ -126,7 +126,7 @@ export class NFT extends SchematicNFT {
       }
     }
 
-    if (isUriUpdate) {
+    if (isUriUpdate && previousUri !== '') {
       const updatedNFT = new NFTURIUpdate(
         event.transaction.hash.toHex() + '-' + event.logIndex.toString(),
       )
