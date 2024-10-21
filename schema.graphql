@@ -21,6 +21,7 @@ type NFT @entity {
   indexPagesUri: String!
   logoUrl: String!
   headerBackground: String!
+  headerLinksUri: String!
 }
 
 type NFTURIUpdate @entity {

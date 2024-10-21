@@ -28,6 +28,7 @@ export class NFT extends SchematicNFT {
     this.indexPagesUri = ''
     this.logoUrl = ''
     this.headerBackground = ''
+    this.headerLinksUri = ''
 
     NFTTemplate.create(address)
   }
@@ -89,6 +90,7 @@ export class NFT extends SchematicNFT {
     const jsonUri = nftData.get('uri')
     const jsonName = nftData.get('name')
     const jsonHeaderBackground = nftData.get('headerBackground')
+    const jsonHeaderLinksUri = nftData.get('headerLinksUri')
 
     let previousUri = ''
 
@@ -123,6 +125,14 @@ export class NFT extends SchematicNFT {
       )
       if (headerBackground !== null) {
         this.headerBackground = headerBackground
+      }
+    }
+    if (jsonHeaderLinksUri !== null) {
+      const headerLinksUri = changetype<string>(
+        jsonUtils.parseString(jsonHeaderLinksUri),
+      )
+      if (headerLinksUri !== null) {
+        this.headerLinksUri = headerLinksUri
       }
     }
 
