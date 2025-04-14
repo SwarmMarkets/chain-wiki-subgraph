@@ -1,20 +1,20 @@
 import { Address, Bytes, dataSource } from '@graphprotocol/graph-ts'
-import { SX1155NFTDeployed } from '../../types/NFTFactory/SX1155NFTFactory'
+import { ChainWikiDeployed } from '../../types/NFTFactory/SX1155NFTFactory'
 import { NFT, NFTFactory } from '../../wrappers'
 
-export function handleCreateNFT(event: SX1155NFTDeployed): void {
+export function handleCreateNFT(event: ChainWikiDeployed): void {
   let factoryAddress = dataSource.address().toHex()
   let factory = NFTFactory.loadOrCreate(factoryAddress)
 
-  const params = event.params
+  const tokenParams = event.params.tokenParams
 
   let address = changetype<Address>(event.params.deployedAddress)
   let nft = new NFT(address)
 
-  nft.setUriJson(event.params.uri, event)
+  nft.setUriJson(tokenParams.kya, event)
 
-  nft.symbol = params.symbol
-  nft.name = params.name
+  nft.symbol = tokenParams.symbol
+  nft.name = tokenParams.name
 
   const editor = Bytes.fromHexString(event.params.editor.toHex())
   const admin = Bytes.fromHexString(event.params.admin.toHex())

@@ -10,16 +10,16 @@ import {
   BigInt,
 } from "@graphprotocol/graph-ts";
 
-export class SX1155NFTDeployed extends ethereum.Event {
-  get params(): SX1155NFTDeployed__Params {
-    return new SX1155NFTDeployed__Params(this);
+export class ChainWikiDeployed extends ethereum.Event {
+  get params(): ChainWikiDeployed__Params {
+    return new ChainWikiDeployed__Params(this);
   }
 }
 
-export class SX1155NFTDeployed__Params {
-  _event: SX1155NFTDeployed;
+export class ChainWikiDeployed__Params {
+  _event: ChainWikiDeployed;
 
-  constructor(event: SX1155NFTDeployed) {
+  constructor(event: ChainWikiDeployed) {
     this._event = event;
   }
 
@@ -27,24 +27,46 @@ export class SX1155NFTDeployed__Params {
     return this._event.parameters[0].value.toAddress();
   }
 
-  get name(): string {
-    return this._event.parameters[1].value.toString();
-  }
-
-  get symbol(): string {
-    return this._event.parameters[2].value.toString();
-  }
-
-  get uri(): string {
-    return this._event.parameters[3].value.toString();
+  get tokenParams(): ChainWikiDeployedTokenParamsStruct {
+    return changetype<ChainWikiDeployedTokenParamsStruct>(
+      this._event.parameters[1].value.toTuple(),
+    );
   }
 
   get admin(): Address {
-    return this._event.parameters[4].value.toAddress();
+    return this._event.parameters[2].value.toAddress();
   }
 
   get editor(): Address {
-    return this._event.parameters[5].value.toAddress();
+    return this._event.parameters[3].value.toAddress();
+  }
+}
+
+export class ChainWikiDeployedTokenParamsStruct extends ethereum.Tuple {
+  get name(): string {
+    return this[0].toString();
+  }
+
+  get symbol(): string {
+    return this[1].toString();
+  }
+
+  get kya(): string {
+    return this[2].toString();
+  }
+}
+
+export class SX1155NFTFactory__deployChainWikiInputTokenParamsStruct extends ethereum.Tuple {
+  get name(): string {
+    return this[0].toString();
+  }
+
+  get symbol(): string {
+    return this[1].toString();
+  }
+
+  get kya(): string {
+    return this[2].toString();
   }
 }
 
@@ -53,20 +75,16 @@ export class SX1155NFTFactory extends ethereum.SmartContract {
     return new SX1155NFTFactory("SX1155NFTFactory", address);
   }
 
-  deployNFTContract(
-    _name: string,
-    _symbol: string,
-    _uri: string,
+  deployChainWiki(
+    tokenParams: SX1155NFTFactory__deployChainWikiInputTokenParamsStruct,
     _admin: Address,
     _editor: Address,
   ): Address {
     let result = super.call(
-      "deployNFTContract",
-      "deployNFTContract(string,string,string,address,address):(address)",
+      "deployChainWiki",
+      "deployChainWiki((string,string,string),address,address):(address)",
       [
-        ethereum.Value.fromString(_name),
-        ethereum.Value.fromString(_symbol),
-        ethereum.Value.fromString(_uri),
+        ethereum.Value.fromTuple(tokenParams),
         ethereum.Value.fromAddress(_admin),
         ethereum.Value.fromAddress(_editor),
       ],
@@ -75,20 +93,16 @@ export class SX1155NFTFactory extends ethereum.SmartContract {
     return result[0].toAddress();
   }
 
-  try_deployNFTContract(
-    _name: string,
-    _symbol: string,
-    _uri: string,
+  try_deployChainWiki(
+    tokenParams: SX1155NFTFactory__deployChainWikiInputTokenParamsStruct,
     _admin: Address,
     _editor: Address,
   ): ethereum.CallResult<Address> {
     let result = super.tryCall(
-      "deployNFTContract",
-      "deployNFTContract(string,string,string,address,address):(address)",
+      "deployChainWiki",
+      "deployChainWiki((string,string,string),address,address):(address)",
       [
-        ethereum.Value.fromString(_name),
-        ethereum.Value.fromString(_symbol),
-        ethereum.Value.fromString(_uri),
+        ethereum.Value.fromTuple(tokenParams),
         ethereum.Value.fromAddress(_admin),
         ethereum.Value.fromAddress(_editor),
       ],
@@ -101,52 +115,60 @@ export class SX1155NFTFactory extends ethereum.SmartContract {
   }
 }
 
-export class DeployNFTContractCall extends ethereum.Call {
-  get inputs(): DeployNFTContractCall__Inputs {
-    return new DeployNFTContractCall__Inputs(this);
+export class DeployChainWikiCall extends ethereum.Call {
+  get inputs(): DeployChainWikiCall__Inputs {
+    return new DeployChainWikiCall__Inputs(this);
   }
 
-  get outputs(): DeployNFTContractCall__Outputs {
-    return new DeployNFTContractCall__Outputs(this);
+  get outputs(): DeployChainWikiCall__Outputs {
+    return new DeployChainWikiCall__Outputs(this);
   }
 }
 
-export class DeployNFTContractCall__Inputs {
-  _call: DeployNFTContractCall;
+export class DeployChainWikiCall__Inputs {
+  _call: DeployChainWikiCall;
 
-  constructor(call: DeployNFTContractCall) {
+  constructor(call: DeployChainWikiCall) {
     this._call = call;
   }
 
-  get _name(): string {
-    return this._call.inputValues[0].value.toString();
-  }
-
-  get _symbol(): string {
-    return this._call.inputValues[1].value.toString();
-  }
-
-  get _uri(): string {
-    return this._call.inputValues[2].value.toString();
+  get tokenParams(): DeployChainWikiCallTokenParamsStruct {
+    return changetype<DeployChainWikiCallTokenParamsStruct>(
+      this._call.inputValues[0].value.toTuple(),
+    );
   }
 
   get _admin(): Address {
-    return this._call.inputValues[3].value.toAddress();
+    return this._call.inputValues[1].value.toAddress();
   }
 
   get _editor(): Address {
-    return this._call.inputValues[4].value.toAddress();
+    return this._call.inputValues[2].value.toAddress();
   }
 }
 
-export class DeployNFTContractCall__Outputs {
-  _call: DeployNFTContractCall;
+export class DeployChainWikiCall__Outputs {
+  _call: DeployChainWikiCall;
 
-  constructor(call: DeployNFTContractCall) {
+  constructor(call: DeployChainWikiCall) {
     this._call = call;
   }
 
   get newSx1155(): Address {
     return this._call.outputValues[0].value.toAddress();
+  }
+}
+
+export class DeployChainWikiCallTokenParamsStruct extends ethereum.Tuple {
+  get name(): string {
+    return this[0].toString();
+  }
+
+  get symbol(): string {
+    return this[1].toString();
+  }
+
+  get kya(): string {
+    return this[2].toString();
   }
 }

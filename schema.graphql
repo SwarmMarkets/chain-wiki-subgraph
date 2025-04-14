@@ -37,6 +37,8 @@ type Token @entity {
   name: String!
   voteProposalUri: String!
   uri: String!
+  guid: String!
+  carbonCreditTokenId: String!
   nft: NFT!
   createdAt: BigInt!
   updatedAt: BigInt!

@@ -17,6 +17,8 @@ export class Token extends SchematicToken {
     this.uri = ''
     this.name = ''
     this.voteProposalUri = ''
+    this.guid = ''
+    this.carbonCreditTokenId = ''
   }
 
   static buildID(nftAddress: Address, tokenId: BigInt): string {
@@ -67,6 +69,8 @@ export class Token extends SchematicToken {
     const jsonUri = tokenData.get('uri')
     const jsonName = tokenData.get('name')
     const jsonVoteProposalUri = tokenData.get('voteProposalUri')
+    const jsonGuid = tokenData.get('guid')
+    const jsonCarbonCreditTokenId = tokenData.get('carbonCreditTokenId')
 
     let previousUri = ''
 
@@ -87,6 +91,18 @@ export class Token extends SchematicToken {
       const voteProposalUri = jsonUtils.parseString(jsonVoteProposalUri)
       if (voteProposalUri !== null) {
         this.voteProposalUri = voteProposalUri
+      }
+    }
+    if (jsonGuid !== null) {
+      const guid = jsonUtils.parseString(jsonGuid)
+      if (guid !== null) {
+        this.guid = guid
+      }
+    }
+    if (jsonCarbonCreditTokenId !== null) {
+      const carbonCreditTokenId = jsonUtils.parseString(jsonCarbonCreditTokenId)
+      if (carbonCreditTokenId !== null) {
+        this.carbonCreditTokenId = carbonCreditTokenId
       }
     }
 

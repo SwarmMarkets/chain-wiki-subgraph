@@ -1,5 +1,6 @@
 import {
   Address,
+  BigInt,
   ByteArray,
   Bytes,
   ethereum,
@@ -11,12 +12,13 @@ import { NFTURIUpdate, NFT as SchematicNFT } from '../types/schema'
 import { NFT as NFTTemplate } from '../types/templates'
 import { push, remove } from '../utils/array'
 import { jsonUtils } from '../utils/json'
-import { stringToByteArray } from '../utils/stringToByteArray'
 
-const DEFAULT_ADMIN_ROLE_BYTES = Bytes.fromHexString(
-  '0x0000000000000000000000000000000000000000000000000000000000000000',
+const DEFAULT_ADMIN_ROLE_BYTES = BigInt.fromString(
+  '14021228976840725488525552479734472711044670502834235584757705851145082423405',
 )
-const EDITOR_ROLE_BYTES: ByteArray = stringToByteArray('EDITOR_ROLE')
+const EDITOR_ROLE_BYTES = BigInt.fromString(
+  '15295750152466503620906458519173777810506558812978484234968466519847000678044',
+)
 
 export class NFT extends SchematicNFT {
   constructor(address: Address) {
@@ -33,7 +35,7 @@ export class NFT extends SchematicNFT {
     NFTTemplate.create(address)
   }
 
-  public grantRole(role: Bytes, _account: Address): void {
+  public grantRole(role: BigInt, _account: Address): void {
     const account = Bytes.fromHexString(_account.toHex()) as Bytes
 
     if (
@@ -54,7 +56,7 @@ export class NFT extends SchematicNFT {
     }
   }
 
-  public revokeRole(role: Bytes, _account: Address): void {
+  public revokeRole(role: BigInt, _account: Address): void {
     const account = Bytes.fromHexString(_account.toHex()) as Bytes
 
     if (role.equals(DEFAULT_ADMIN_ROLE_BYTES)) {

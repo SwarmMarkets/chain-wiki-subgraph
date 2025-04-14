@@ -1,4 +1,4 @@
-import { TokenURISet, Minted } from '../../types/templates/NFT/SX1155NFT'
+import { TokenKyaUpdated, Minted } from '../../types/templates/NFT/SX1155NFT'
 import { Token } from '../../wrappers/nft-token'
 
 export function handleCreateToken(event: Minted): void {
@@ -16,12 +16,17 @@ export function handleCreateToken(event: Minted): void {
   token.save()
 }
 
-export function handleUpdateTokenUri(event: TokenURISet): void {
+export function handleUpdateTokenUri(event: TokenKyaUpdated): void {
   const nftAddress = event.address
   const tokenId = event.params.id
 
-  const token = Token.mustLoad(nftAddress, tokenId)
-  token.setUriJson(event.params.uri, event, true)
+  const token = Token.safeLoad(nftAddress, tokenId)
+
+  if (token === null) {
+    return
+  }
+
+  token.setUriJson(event.params.kya, event, true)
 
   token.updatedAt = event.block.timestamp
 
