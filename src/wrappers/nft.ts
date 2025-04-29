@@ -29,6 +29,7 @@ export class NFT extends SchematicNFT {
     this.editors = []
     this.indexPagesUri = ''
     this.logoUrl = ''
+    this.iconLogoUrl = ''
     this.headerBackground = ''
     this.headerLinksUri = ''
 
@@ -88,6 +89,7 @@ export class NFT extends SchematicNFT {
     const nftData = nftJsonValue.value.toObject()
 
     const jsonLogoUrl = nftData.get('logoUrl')
+    const jsonIconLogoUrl = nftData.get('iconLogoUrl')
     const jsonIndexPagesUri = nftData.get('indexPagesUri')
     const jsonUri = nftData.get('uri')
     const jsonName = nftData.get('name')
@@ -100,6 +102,12 @@ export class NFT extends SchematicNFT {
       const logoUrl = jsonUtils.parseString(jsonLogoUrl)
       if (logoUrl !== null) {
         this.logoUrl = logoUrl
+      }
+    }
+    if (jsonIconLogoUrl !== null) {
+      const iconLogoUrl = jsonUtils.parseString(jsonIconLogoUrl)
+      if (iconLogoUrl !== null) {
+        this.iconLogoUrl = iconLogoUrl
       }
     }
     if (jsonIndexPagesUri !== null) {
