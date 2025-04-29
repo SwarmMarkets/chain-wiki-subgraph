@@ -1,0 +1,12 @@
+{
+  "network": "base",
+  "schemaFileName": "schema.graphql",
+  "dataSources": {
+    "sx1155": {
+      "factory": {
+        "address": "0x04620054fB4052Faf2a6A3F664149d574A907193",
+        "startBlock": 29269130
+      }
+    }
+  }
+}

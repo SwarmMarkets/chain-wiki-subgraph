@@ -17,6 +17,11 @@ type NFT @entity {
 
   "List of addresses with EDITOR role"
   editors: [Bytes!]!
+
+  indexPagesUri: String!
+  logoUrl: String!
+  headerBackground: String!
+  headerLinksUri: String!
 }
 
 type NFTURIUpdate @entity {
@@ -29,7 +34,11 @@ type NFTURIUpdate @entity {
 
 type Token @entity {
   id: ID!
+  name: String!
+  voteProposalUri: String!
   uri: String!
+  guid: String!
+  carbonCreditTokenId: String!
   nft: NFT!
   createdAt: BigInt!
   updatedAt: BigInt!

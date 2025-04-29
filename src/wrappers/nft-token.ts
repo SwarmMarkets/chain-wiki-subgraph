@@ -1,6 +1,13 @@
-import { Address, BigInt, log } from '@graphprotocol/graph-ts/index'
+import {
+  Address,
+  BigInt,
+  ethereum,
+  json,
+  log,
+} from '@graphprotocol/graph-ts/index'
 
-import { Token as SchematicToken } from '../types/schema'
+import { Token as SchematicToken, TokenURIUpdate } from '../types/schema'
+import { jsonUtils } from '../utils/json'
 
 export class Token extends SchematicToken {
   constructor(nftAddress: Address, tokenId: BigInt) {
@@ -8,6 +15,10 @@ export class Token extends SchematicToken {
     super(id)
 
     this.uri = ''
+    this.name = ''
+    this.voteProposalUri = ''
+    this.guid = ''
+    this.carbonCreditTokenId = ''
   }
 
   static buildID(nftAddress: Address, tokenId: BigInt): string {
@@ -37,5 +48,77 @@ export class Token extends SchematicToken {
     }
 
     return changetype<Token>(token)
+  }
+
+  public setUriJson(
+    jsonString: string,
+    event: ethereum.Event,
+    isUriUpdate: boolean = false,
+  ): void {
+    const tokenJsonValue = json.try_fromString(jsonString)
+
+    if (tokenJsonValue.isError) {
+      log.warning('WARNING: Failed to parse json from string tokenId {}', [
+        this.id,
+      ])
+      return
+    }
+
+    const tokenData = tokenJsonValue.value.toObject()
+
+    const jsonUri = tokenData.get('uri')
+    const jsonName = tokenData.get('name')
+    const jsonVoteProposalUri = tokenData.get('voteProposalUri')
+    const jsonGuid = tokenData.get('guid')
+    const jsonCarbonCreditTokenId = tokenData.get('carbonCreditTokenId')
+
+    let previousUri = ''
+
+    if (jsonUri !== null) {
+      const uri = jsonUtils.parseString(jsonUri)
+      if (uri !== null) {
+        previousUri = this.uri
+        this.uri = uri
+      }
+    }
+    if (jsonName !== null) {
+      const name = jsonUtils.parseString(jsonName)
+      if (name !== null) {
+        this.name = name
+      }
+    }
+    if (jsonVoteProposalUri !== null) {
+      const voteProposalUri = jsonUtils.parseString(jsonVoteProposalUri)
+      if (voteProposalUri !== null) {
+        this.voteProposalUri = voteProposalUri
+      }
+    }
+    if (jsonGuid !== null) {
+      const guid = jsonUtils.parseString(jsonGuid)
+      if (guid !== null) {
+        this.guid = guid
+      }
+    }
+    if (jsonCarbonCreditTokenId !== null) {
+      const carbonCreditTokenId = jsonUtils.parseString(jsonCarbonCreditTokenId)
+      if (carbonCreditTokenId !== null) {
+        this.carbonCreditTokenId = carbonCreditTokenId
+      }
+    }
+
+    if (isUriUpdate && previousUri !== '') {
+      const updatedToken = new TokenURIUpdate(
+        event.transaction.hash.toHexString() +
+          '-' +
+          event.logIndex.toHexString(),
+      )
+
+      updatedToken.updatedAt = event.block.timestamp
+      updatedToken.token = this.id
+      updatedToken.nft = this.nft
+      updatedToken.newURI = this.uri
+      updatedToken.previousURI = previousUri
+      updatedToken.save()
+    }
   }
 }
