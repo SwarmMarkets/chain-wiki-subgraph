@@ -5,6 +5,7 @@ import {
   Bytes,
   ethereum,
   json,
+  JSONValueKind,
   log,
 } from '@graphprotocol/graph-ts/index'
 
@@ -32,8 +33,35 @@ export class NFT extends SchematicNFT {
     this.iconLogoUrl = ''
     this.headerBackground = ''
     this.headerLinksUri = ''
+    this.preferredAttestators = []
 
     NFTTemplate.create(address)
+  }
+
+  public addPreferredAttestator(address: Address): void {
+    const attestatorAddress = Bytes.fromHexString(address.toHex()) as Bytes
+
+    if (this.preferredAttestators.indexOf(attestatorAddress) === -1) {
+      this.preferredAttestators = push<Bytes>(
+        this.preferredAttestators,
+        attestatorAddress,
+      )
+    } else {
+      log.warning('Attestator already exists: {}', [attestatorAddress.toHex()])
+    }
+  }
+
+  public removePreferredAttestator(address: Address): void {
+    const attestatorAddress = Bytes.fromHexString(address.toHex()) as Bytes
+
+    if (this.preferredAttestators.indexOf(attestatorAddress) !== -1) {
+      this.preferredAttestators = remove<Bytes>(
+        this.preferredAttestators,
+        attestatorAddress,
+      )
+    } else {
+      log.warning('Attestator does not exist: {}', [attestatorAddress.toHex()])
+    }
   }
 
   public grantRole(role: BigInt, _account: Address): void {
@@ -95,6 +123,10 @@ export class NFT extends SchematicNFT {
     const jsonName = nftData.get('name')
     const jsonHeaderBackground = nftData.get('headerBackground')
     const jsonHeaderLinksUri = nftData.get('headerLinksUri')
+    const jsonPreferredAttestatorToAdd = nftData.get('preferredAttestatorToAdd')
+    const jsonPreferredAttestatorToRemove = nftData.get(
+      'preferredAttestatorToRemove',
+    )
 
     let previousUri = ''
 
@@ -143,6 +175,27 @@ export class NFT extends SchematicNFT {
       )
       if (headerLinksUri !== null) {
         this.headerLinksUri = headerLinksUri
+      }
+    }
+    if (
+      jsonPreferredAttestatorToAdd !== null &&
+      jsonPreferredAttestatorToAdd.kind === JSONValueKind.STRING
+    ) {
+      const addressString = jsonPreferredAttestatorToAdd.toString()
+      if (addressString.startsWith('0x') && addressString.length == 42) {
+        const preferredAttestatorToAdd = Address.fromString(addressString)
+        this.addPreferredAttestator(preferredAttestatorToAdd)
+      }
+    }
+
+    if (
+      jsonPreferredAttestatorToRemove !== null &&
+      jsonPreferredAttestatorToRemove.kind === JSONValueKind.STRING
+    ) {
+      const addressString = jsonPreferredAttestatorToRemove.toString()
+      if (addressString.startsWith('0x') && addressString.length == 42) {
+        const preferredAttestatorToRemove = Address.fromString(addressString)
+        this.removePreferredAttestator(preferredAttestatorToRemove)
       }
     }
 

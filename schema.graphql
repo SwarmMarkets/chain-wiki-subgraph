@@ -23,6 +23,7 @@ type NFT @entity {
   iconLogoUrl: String!
   headerBackground: String!
   headerLinksUri: String!
+  preferredAttestators: [Bytes!]!
 }
 
 type NFTURIUpdate @entity {
