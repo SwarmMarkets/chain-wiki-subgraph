@@ -6,7 +6,7 @@ export function handleCreateNFT(event: ChainWikiDeployed): void {
   let factoryAddress = dataSource.address().toHex()
   let factory = NFTFactory.loadOrCreate(factoryAddress)
 
-  const tokenParams = event.params.tokenParams
+  const tokenParams = event.params
 
   let address = changetype<Address>(event.params.deployedAddress)
   let nft = new NFT(address)

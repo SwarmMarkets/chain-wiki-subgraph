@@ -36,6 +36,7 @@ type NFTURIUpdate @entity {
 
 type Token @entity {
   id: ID!
+  slug: String!
   name: String!
   voteProposalUri: String!
   uri: String!

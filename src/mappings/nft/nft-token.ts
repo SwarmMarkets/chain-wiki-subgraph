@@ -1,19 +1,32 @@
+import { SlugUpdated } from '../../types/NFTFactory/SX1155NFT'
 import { TokenKyaUpdated, Minted } from '../../types/templates/NFT/SX1155NFT'
 import { Token } from '../../wrappers/nft-token'
 
 export function handleCreateToken(event: Minted): void {
   const nftAddress = event.address
   const tokenId = event.params.tokenId
+  const slug = event.params.slug
 
   const token = new Token(nftAddress, tokenId)
 
   token.setUriJson(event.params.uri, event)
 
+  token.slug = slug
   token.updatedAt = event.block.timestamp
   token.createdAt = event.block.timestamp
   token.nft = nftAddress.toHexString()
 
   token.save()
+}
+
+export function handleUpdateSlug(event: SlugUpdated): void {
+  const nftAddress = event.address
+  const tokenId = event.params.id
+  const slug = event.params.slug
+
+  const token = Token.mustLoad(nftAddress, tokenId)
+
+  token.slug = slug.toString()
 }
 
 export function handleUpdateTokenUri(event: TokenKyaUpdated): void {
