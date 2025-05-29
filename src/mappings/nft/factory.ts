@@ -16,15 +16,16 @@ export function handleCreateNFT(event: ChainWikiDeployed): void {
   nft.symbol = tokenParams.symbol
   nft.name = tokenParams.name
 
-  const editor = Bytes.fromHexString(event.params.editor.toHex())
-  const admin = Bytes.fromHexString(event.params.admin.toHex())
-
-  nft.admins = [admin]
-  nft.editors = [editor]
+  nft.admins = event.params.admin.map<Bytes>((a) =>
+    Bytes.fromHexString(a.toHexString()),
+  )
+  nft.editors = event.params.editor.map<Bytes>((e) =>
+    Bytes.fromHexString(e.toHexString()),
+  )
 
   nft.updatedAt = event.block.timestamp
   nft.createdAt = event.block.timestamp
-  nft.creator = event.params.admin
+  nft.creator = event.params.owner
 
   nft.save()
   factory.save()
