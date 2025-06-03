@@ -24,7 +24,11 @@ export function handleUpdateSlug(event: SlugUpdated): void {
   const tokenId = event.params.id
   const slug = event.params.slug
 
-  const token = Token.mustLoad(nftAddress, tokenId)
+  const token = Token.safeLoad(nftAddress, tokenId)
+
+  if (token === null) {
+    return
+  }
 
   token.slug = slug.toString()
 }
