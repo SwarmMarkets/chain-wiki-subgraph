@@ -4,6 +4,7 @@ type NFTFactory @entity {
 
 type NFT @entity {
   id: ID!
+  slug: String!
   name: String!
   symbol: String!
   uri: String!

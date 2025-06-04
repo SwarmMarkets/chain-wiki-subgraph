@@ -1,4 +1,4 @@
-import { SlugUpdated } from '../../types/NFTFactory/SX1155NFT'
+import { TokenSlugUpdated } from '../../types/NFTFactory/SX1155NFT'
 import { TokenKyaUpdated, Minted } from '../../types/templates/NFT/SX1155NFT'
 import { Token } from '../../wrappers/nft-token'
 
@@ -19,9 +19,9 @@ export function handleCreateToken(event: Minted): void {
   token.save()
 }
 
-export function handleUpdateSlug(event: SlugUpdated): void {
+export function handleUpdateSlug(event: TokenSlugUpdated): void {
   const nftAddress = event.address
-  const tokenId = event.params.id
+  const tokenId = event.params.slugId
   const slug = event.params.slug
 
   const token = Token.safeLoad(nftAddress, tokenId)

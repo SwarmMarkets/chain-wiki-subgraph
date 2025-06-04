@@ -27,8 +27,10 @@ dataSources:
         - name: SX1155NFT
           file: ./abis/SX1155NFT.json
       eventHandlers:
-        - event: ChainWikiDeployed(address,string,string,string,address,address[],address[])
+        - event: ChainWikiDeployed(indexed address,indexed string,(string,string,string),(address,address[],address[]))
           handler: handleCreateNFT
+        - event: ContractSlugUpdated(indexed string)
+          handler: handleUpdateNFTSlug
 {{ /dataSources.sx1155 }}
 templates:
 {{ #dataSources.sx1155 }}
