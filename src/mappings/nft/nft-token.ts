@@ -19,7 +19,7 @@ export function handleCreateToken(event: Minted): void {
   token.save()
 }
 
-export function handleUpdateSlug(event: TokenSlugUpdated): void {
+export function handleUpdateTokenSlug(event: TokenSlugUpdated): void {
   const nftAddress = event.address
   const tokenId = event.params.slugId
   const slug = event.params.slug
