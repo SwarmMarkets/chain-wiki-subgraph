@@ -27,8 +27,9 @@ dataSources:
         - name: SX1155NFT
           file: ./abis/SX1155NFT.json
       eventHandlers:
-        - event: ChainWikiDeployed(address,(string,string,string),address,address)
+        - event: ChainWikiDeployed(indexed address,string,(string,string,string),(address,address[],address[]))
           handler: handleCreateNFT
+
 {{ /dataSources.sx1155 }}
 templates:
 {{ #dataSources.sx1155 }}
@@ -51,7 +52,7 @@ templates:
       eventHandlers:
         - event: KyaUpdated(address,string)
           handler: handleUpdateNFTUri
-        - event: Minted(address,address,uint256,uint256,string)
+        - event: Minted(address,address,uint256,uint256,string,string)
           handler: handleCreateToken
         - event: TokenKyaUpdated(address,indexed uint256,string)
           handler: handleUpdateTokenUri
@@ -61,4 +62,8 @@ templates:
           handler: handleCommetRemoved
         - event: RoleSet(indexed address,indexed uint256,indexed bool)
           handler: handleRoleGranted
+        - event: ContractSlugUpdated(string)
+          handler: handleUpdateNFTSlug
+        - event: TokenSlugUpdated(indexed uint256,string)
+          handler: handleUpdateTokenSlug
 {{ /dataSources.sx1155 }}

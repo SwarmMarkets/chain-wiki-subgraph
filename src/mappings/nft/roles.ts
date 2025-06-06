@@ -11,9 +11,3 @@ export function handleRoleGranted(event: RoleSet): void {
   }
   nft.save()
 }
-
-// export function handleRoleRevoked(event: RoleRevoked): void {
-//   const nft = NFT.mustLoad(event.address.toHex())
-//   nft.revokeRole(event.params.role, event.params.account)
-//   nft.save()
-// }

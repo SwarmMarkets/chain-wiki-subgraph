@@ -6,25 +6,28 @@ export function handleCreateNFT(event: ChainWikiDeployed): void {
   let factoryAddress = dataSource.address().toHex()
   let factory = NFTFactory.loadOrCreate(factoryAddress)
 
-  const tokenParams = event.params.tokenParams
+  const nftParams = event.params
 
-  let address = changetype<Address>(event.params.deployedAddress)
+  let address = changetype<Address>(nftParams.chainWiki)
   let nft = new NFT(address)
 
-  nft.setUriJson(tokenParams.kya, event)
+  nft.setUriJson(nftParams.data.kya, event)
 
-  nft.symbol = tokenParams.symbol
-  nft.name = tokenParams.name
+  nft.symbol = nftParams.data.symbol
+  nft.name = nftParams.data.name
 
-  const editor = Bytes.fromHexString(event.params.editor.toHex())
-  const admin = Bytes.fromHexString(event.params.admin.toHex())
+  nft.slug = nftParams.slug.toString()
 
-  nft.admins = [admin]
-  nft.editors = [editor]
+  nft.admins = event.params.roles.admins.map<Bytes>((a) =>
+    Bytes.fromHexString(a.toHexString()),
+  )
+  nft.editors = event.params.roles.editors.map<Bytes>((e) =>
+    Bytes.fromHexString(e.toHexString()),
+  )
 
   nft.updatedAt = event.block.timestamp
   nft.createdAt = event.block.timestamp
-  nft.creator = event.params.admin
+  nft.creator = event.params.roles.owner
 
   nft.save()
   factory.save()

@@ -14,6 +14,7 @@ export class Token extends SchematicToken {
     const id = Token.buildID(nftAddress, tokenId)
     super(id)
 
+    this.slug = ''
     this.uri = ''
     this.name = ''
     this.voteProposalUri = ''

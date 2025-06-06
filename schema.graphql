@@ -4,6 +4,7 @@ type NFTFactory @entity {
 
 type NFT @entity {
   id: ID!
+  slug: String!
   name: String!
   symbol: String!
   uri: String!
@@ -36,6 +37,7 @@ type NFTURIUpdate @entity {
 
 type Token @entity {
   id: ID!
+  slug: String!
   name: String!
   voteProposalUri: String!
   uri: String!
