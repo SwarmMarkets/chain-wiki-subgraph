@@ -29,8 +29,7 @@ dataSources:
       eventHandlers:
         - event: ChainWikiDeployed(indexed address,string,(string,string,string),(address,address[],address[]))
           handler: handleCreateNFT
-        - event: ContractSlugUpdated(string)
-          handler: handleUpdateNFTSlug
+
 {{ /dataSources.sx1155 }}
 templates:
 {{ #dataSources.sx1155 }}
@@ -63,6 +62,8 @@ templates:
           handler: handleCommetRemoved
         - event: RoleSet(indexed address,indexed uint256,indexed bool)
           handler: handleRoleGranted
-        - event: TokenSlugUpdated(indexed uint256,indexed string)
+        - event: ContractSlugUpdated(string)
+          handler: handleUpdateNFTSlug
+        - event: TokenSlugUpdated(indexed uint256,string)
           handler: handleUpdateTokenSlug
 {{ /dataSources.sx1155 }}

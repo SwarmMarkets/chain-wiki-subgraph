@@ -1,8 +1,5 @@
-import { Address, Bytes, dataSource, log } from '@graphprotocol/graph-ts'
-import {
-  ChainWikiDeployed,
-  ContractSlugUpdated,
-} from '../../types/NFTFactory/SX1155NFTFactory'
+import { Address, Bytes, dataSource } from '@graphprotocol/graph-ts'
+import { ChainWikiDeployed } from '../../types/NFTFactory/SX1155NFTFactory'
 import { NFT, NFTFactory } from '../../wrappers'
 
 export function handleCreateNFT(event: ChainWikiDeployed): void {
@@ -31,20 +28,6 @@ export function handleCreateNFT(event: ChainWikiDeployed): void {
   nft.updatedAt = event.block.timestamp
   nft.createdAt = event.block.timestamp
   nft.creator = event.params.roles.owner
-
-  nft.save()
-  factory.save()
-}
-
-export function handleUpdateNFTSlug(event: ContractSlugUpdated): void {
-  log.warning('UPDATE SLUG EVENT: {}', [event.params.slug.toString()])
-  let factoryAddress = dataSource.address().toHex()
-  let factory = NFTFactory.loadOrCreate(factoryAddress)
-  const nft = NFT.mustLoad(event.address.toHexString())
-  log.warning('update slug NFT: {}', [event.address.toHexString()])
-  log.warning('update slug: {}', [event.params.slug.toString()])
-
-  nft.slug = event.params.slug.toString()
 
   nft.save()
   factory.save()
