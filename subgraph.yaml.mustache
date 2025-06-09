@@ -52,13 +52,13 @@ templates:
       eventHandlers:
         - event: KyaUpdated(address,string)
           handler: handleUpdateNFTUri
-        - event: Minted(address,address,uint256,uint256,string,string)
+        - event: Minted(indexed address,indexed address,uint256,uint256,string,string)
           handler: handleCreateToken
-        - event: TokenKyaUpdated(address,indexed uint256,string)
+        - event: TokenKyaUpdated(indexed address,indexed uint256,string)
           handler: handleUpdateTokenUri
-        - event: Commented(address,uint256,string,uint256)
+        - event: Commented(indexed address,indexed uint256,string,uint256)
           handler: handleComment
-        - event: CommentRemoved(address,uint256,string,uint256)
+        - event: CommentRemoved(indexed address,indexed uint256,string,uint256)
           handler: handleCommetRemoved
         - event: RoleSet(indexed address,indexed uint256,indexed bool)
           handler: handleRoleGranted
