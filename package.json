@@ -10,7 +10,6 @@
     "precompile": "yarn generate:config && yarn codegen",
     "build": "graph build",
     "build:full": "yarn precompile && yarn build",
-    "deploy": "graph deploy --deploy-key $ACCESS_TOKEN --studio $SUBGRAPH_NAME --version-label $RANDOM_VERSION",
     "auth": "graph auth $DEPLOY_KEY",
     "deploy:single": "graph deploy $SUBGRAPH_SLUG -l $VERSION_LABEL",
     "deploy:thegraph": "yarn auth && yarn deploy:single",
