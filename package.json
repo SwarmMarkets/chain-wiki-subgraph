@@ -27,8 +27,8 @@
     "prettier:list-different": "prettier --config .prettierrc --list-different \"**/*.{js,ts}\""
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.51.0",
-    "@graphprotocol/graph-ts": "0.31.0",
+    "@graphprotocol/graph-cli": "0.91.1",
+    "@graphprotocol/graph-ts": "0.36.0",
     "@typescript-eslint/eslint-plugin": "^5.59.1",
     "@typescript-eslint/parser": "^5.59.1",
     "assemblyscript": "^0.27.4",
