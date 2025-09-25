@@ -1,0 +1,22 @@
+name: Setup
+description: Compose installing the node and cahing the node_modules
+
+runs:
+  using: composite
+  steps:
+    - name: Setup NodeJS
+      uses: actions/setup-node@v4.0.3
+      with:
+        node-version: 18
+
+    - name: Get yarn cache
+      uses: actions/cache@v4
+      id: cache
+      with:
+        path: "**/node_modules"
+        key: Yarn-${{ hashFiles('**/yarn.lock') }}
+
+    - name: Install dependencies if cache is not found
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: yarn --frozen-lockfile

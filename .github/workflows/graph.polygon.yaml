@@ -1,0 +1,62 @@
+# .github/workflows/deploy-polygon.yml
+name: Deploy Graph on Polygon Mainnet
+
+on:
+  workflow_call:
+    secrets:
+      DEPLOYMENT_THEGRAPH_SECRET:
+        required: true
+    inputs:
+      SUBGRAPH_SLUG:
+        description: Specify a subgraph name
+        required: false
+        type: string
+        default: chain-wiki-polygon
+      VERSION_LABEL:
+        description: Specify the version label for the deployment
+        required: false
+        type: string
+        default: v0.0.1
+
+  workflow_dispatch:
+    inputs:
+      SUBGRAPH_SLUG:
+        description: Are you going to deploy a Polygon Mainnet version?
+        required: true
+        type: choice
+        default: chain-wiki-polygon
+        options:
+          - chain-wiki-polygon
+      VERSION_LABEL:
+        description: Specify the version label for the deployment
+        required: true
+        type: string
+        default: v0.0.1
+
+jobs:
+  deploy-polygon:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4.2.2
+
+      - name: Set up environment
+        uses: ./.github/actions/setup
+
+      - name: Build full
+        env:
+          NETWORK: matic
+        run: yarn build:full
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Deploy
+        env:
+          SUBGRAPH_SLUG: ${{ inputs.SUBGRAPH_SLUG }}
+          VERSION_LABEL: ${{ inputs.VERSION_LABEL }}
+          NETWORK: matic
+        run: |
+          export DEPLOY_KEY="${{ secrets.DEPLOYMENT_THEGRAPH_SECRET }}"
+          yarn deploy:thegraph
