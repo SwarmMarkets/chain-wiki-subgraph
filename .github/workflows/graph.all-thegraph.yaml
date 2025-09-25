@@ -1,0 +1,43 @@
+name: Deploy All TheGraph Subgraphs
+
+on:
+  workflow_dispatch:
+    inputs:
+      VERSION_LABEL:
+        description: "Specify the version label for the deployment"
+        required: true
+        default: v0.0.1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - network: base
+            subgraph_slug: swarmx-base-v2
+          - network: matic
+            subgraph_slug: swarmx-polygon-v2
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4.2.2
+
+      - name: Set up environment
+        uses: ./.github/actions/setup
+
+      - name: Build full
+        env:
+          NETWORK: ${{ matrix.network }}
+        run: yarn build:full
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Deploy
+        env:
+          SUBGRAPH_SLUG: ${{ matrix.subgraph_slug }}
+          VERSION_LABEL: ${{ github.event.inputs.VERSION_LABEL }}
+        run: |
+          export DEPLOY_KEY="${{ secrets.DEPLOYMENT_THEGRAPH_SECRET }}"
+          yarn deploy:thegraph
