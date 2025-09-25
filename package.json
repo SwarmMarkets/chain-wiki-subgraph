@@ -2,7 +2,7 @@
   "name": "chain-wiki-subgraph",
   "version": "1.0.0",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "scripts": {
     "generate:config": "rimraf subgraph.yaml && mustache config/$NETWORK.json subgraph.yaml.mustache > subgraph.yaml",

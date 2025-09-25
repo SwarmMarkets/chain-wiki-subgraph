@@ -36,6 +36,11 @@ on:
 jobs:
   deploy-polygon:
     runs-on: ubuntu-latest
+    env:
+      SUBGRAPH_SLUG: ${{ inputs.SUBGRAPH_SLUG }}
+      VERSION_LABEL: ${{ inputs.VERSION_LABEL }}
+      DEPLOY_KEY: ${{ secrets.DEPLOYMENT_THEGRAPH_SECRET }}
+      NETWORK: matic
 
     steps:
       - name: Checkout the code
@@ -45,18 +50,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build full
-        env:
-          NETWORK: matic
         run: yarn build:full
 
-      # - name: Lint
-      #   run: yarn lint
-
       - name: Deploy
-        env:
-          SUBGRAPH_SLUG: ${{ inputs.SUBGRAPH_SLUG }}
-          VERSION_LABEL: ${{ inputs.VERSION_LABEL }}
-          NETWORK: matic
-        run: |
-          export DEPLOY_KEY="${{ secrets.DEPLOYMENT_THEGRAPH_SECRET }}"
-          yarn deploy:thegraph
+        run: yarn deploy:thegraph
