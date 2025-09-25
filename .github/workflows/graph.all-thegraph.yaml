@@ -15,9 +15,9 @@ jobs:
       matrix:
         include:
           - network: base
-            subgraph_slug: swarmx-base-v2
+            subgraph_slug: chain-wiki-base
           - network: matic
-            subgraph_slug: swarmx-polygon-v2
+            subgraph_slug: chain-wiki-polygon
 
     steps:
       - name: Checkout the code
