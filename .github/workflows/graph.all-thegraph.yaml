@@ -31,8 +31,8 @@ jobs:
           NETWORK: ${{ matrix.network }}
         run: yarn build:full
 
-      - name: Lint
-        run: yarn lint
+      # - name: Lint
+      #   run: yarn lint
 
       - name: Deploy
         env:

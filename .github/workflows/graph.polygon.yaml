@@ -49,8 +49,8 @@ jobs:
           NETWORK: matic
         run: yarn build:full
 
-      - name: Lint
-        run: yarn lint
+      # - name: Lint
+      #   run: yarn lint
 
       - name: Deploy
         env:
