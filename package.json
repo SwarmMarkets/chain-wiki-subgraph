@@ -5,8 +5,9 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "generate:config": "rimraf subgraph.yaml && mustache config/arbitrum-sepolia.json subgraph.yaml.mustache > subgraph.yaml",
+    "generate:config": "rimraf subgraph.yaml && mustache config/$NETWORK.json subgraph.yaml.mustache > subgraph.yaml",
     "codegen": "rimraf src/types/ && graph codegen --output-dir src/types/",
+    "precompile": "yarn generate:config && yarn codegen",
     "build": "graph build",
     "build:full": "yarn precompile && yarn build",
     "deploy": "graph deploy --deploy-key $ACCESS_TOKEN --studio $SUBGRAPH_NAME --version-label $RANDOM_VERSION",
