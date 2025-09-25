@@ -31,9 +31,6 @@ jobs:
           NETWORK: ${{ matrix.network }}
         run: yarn build:full
 
-      # - name: Lint
-      #   run: yarn lint
-
       - name: Deploy
         env:
           SUBGRAPH_SLUG: ${{ matrix.subgraph_slug }}
